@@ -1,0 +1,19 @@
+## Error Type
+Console Error
+
+## Error Message
+Can't perform a React state update on a component that hasn't mounted yet. This indicates that you have a side-effect in your render function that asynchronously tries to update the component. Move this work to useEffect instead.
+
+
+    at TransactionPage (app/transactions/page.tsx:136:11)
+
+## Code Frame
+  134 |         </CardHeader>
+  135 |         <CardContent className="space-y-3">
+> 136 |           <DataTable columns={columns} data={localTransactions} />
+      |           ^
+  137 |         </CardContent>
+  138 |       </Card>
+  139 |
+
+Next.js version: 16.1.1 (Turbopack)

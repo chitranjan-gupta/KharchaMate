@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, type ReactNode } from "react"
 import type { Expense, Category, Income } from "./types"
-import { getTotalBudget } from "./category-utils"
+import { generateId, getTotalBudget } from "./category-utils"
 
 const initialExpenses: Expense[] = [
   {
@@ -211,7 +211,7 @@ interface ExpenseContextType {
   totalBudget: number
   totalIncome: number
   remainingBudget: number
-  addExpense: (expense: Omit<Expense, "id">) => void
+  addExpense: (expense: Expense) => void
   deleteExpense: (id: string) => void
   updateCategories: (categories: Category[]) => void
   addIncome: (income: Omit<Income, "id">) => void
@@ -230,9 +230,10 @@ export function ExpenseProvider({ children }: { children: ReactNode }) {
   const totalIncome = income.reduce((sum, inc) => sum + inc.amount, 0)
   const remainingBudget = totalBudget - totalExpenses
 
-  const addExpense = (expense: Omit<Expense, "id">) => {
-    const newExpense: Expense = { ...expense, id: Date.now().toString() }
-    setExpenses([newExpense, ...expenses])
+  const addExpense = (expense: Expense) => {
+    const newExpense: Expense = { ...expense, id: expense.id || generateId() }
+    // setExpenses([newExpense, ...expenses])
+    setExpenses((prevExpenses) => [prevExpenses.filter((e) => e.id !== newExpense.id), newExpense].flat())
   }
 
   const deleteExpense = (id: string) => {

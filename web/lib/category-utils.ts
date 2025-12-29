@@ -1,4 +1,4 @@
-import type { Category, Exp, FlatCategory } from "./types"
+import type { Category, FlatCategory } from "./types"
 
 // Flatten categories into a list with paths for selection dropdowns
 export function flattenCategories(
@@ -168,57 +168,6 @@ export function moveCategoryById(
 
   // Otherwise, find target parent and add as child
   const addToParent = (cats: Category[]): Category[] => {
-    return cats.map((cat) => {
-      if (cat.id === targetParentId) {
-        return {
-          ...cat,
-          children: [...(cat.children || []), draggedCategory!],
-        }
-      }
-      return {
-        ...cat,
-        children: cat.children ? addToParent(cat.children) : [],
-      }
-    })
-  }
-
-  return addToParent(result)
-}
-
-export function moveExpById(
-  categories: Exp[],
-  draggedId: string,
-  targetParentId: string | null, // null means move to root
-): Exp[] {
-  // First, find and remove the dragged category
-  let draggedCategory: Exp | null = null
-
-  const removeFromTree = (cats: Exp[]): Exp[] => {
-    return cats
-      .filter((cat) => {
-        if (cat.id === draggedId) {
-          draggedCategory = { ...cat }
-          return false
-        }
-        return true
-      })
-      .map((cat) => ({
-        ...cat,
-        children: cat.children ? removeFromTree(cat.children) : [],
-      }))
-  }
-
-  const result = removeFromTree(categories)
-
-  if (!draggedCategory) return categories
-
-  // If target is null, add to root level
-  if (targetParentId === null) {
-    return [...result, draggedCategory]
-  }
-
-  // Otherwise, find target parent and add as child
-  const addToParent = (cats: Exp[]): Exp[] => {
     return cats.map((cat) => {
       if (cat.id === targetParentId) {
         return {

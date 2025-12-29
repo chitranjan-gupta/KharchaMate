@@ -76,6 +76,17 @@ function buildNodeForCategory(
     children,
   };
 }
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-IN", { month: "short", day: "numeric" });
+  };
+
+  const formatAmount = (amount: number) => {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+    }).format(amount);
+  };
 
 function ExpenseTreeItem({
   node,
@@ -93,11 +104,6 @@ function ExpenseTreeItem({
   const isExpanded = expanded.has(node.name);
   const hasContent = node.expenses.length > 0 || node.children.length > 0;
   const isRoot = depth === 0;
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-  };
 
   return (
     <div
@@ -122,7 +128,7 @@ function ExpenseTreeItem({
         <span className="text-sm font-medium flex-1">{node.name}</span>
 
         <span className="text-sm font-semibold text-destructive">
-          -${node.total.toFixed(2)}
+          {formatAmount(node.total)}
         </span>
       </div>
 
@@ -162,7 +168,7 @@ function ExpenseTreeItem({
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
                     <span className="text-sm font-semibold text-destructive">
-                      -${expense.amount.toFixed(2)}
+                      {formatAmount(expense.amount)}
                     </span>
                     <Button
                       variant="ghost"
@@ -250,7 +256,7 @@ export default function ExpensesPage() {
     <div className="container mx-auto px-4 py-6 md:py-8">
       <PageHeader
         title="Expenses"
-        description={`Total: $${totalExpenses.toFixed(2)} across ${
+        description={`Total: ${formatAmount(totalExpenses)} across ${
           expenses.length
         } transactions`}
         actions={
@@ -285,7 +291,7 @@ export default function ExpensesPage() {
             <div className="text-right">
               <p className="text-xs text-muted-foreground">Total Spent</p>
               <p className="text-xl font-bold text-destructive">
-                -${totalExpenses.toFixed(2)}
+                {formatAmount(totalExpenses)}
               </p>
             </div>
           </div>
