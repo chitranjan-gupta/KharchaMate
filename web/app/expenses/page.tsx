@@ -46,7 +46,6 @@ function buildNodeForCategory(
       exp.categoryPath.length === currentPath.length &&
       exp.categoryPath.every((p, i) => p === currentPath[i])
   );
-
   // Build children nodes
   const children: ExpenseTreeNode[] = [];
   if (category.children) {
@@ -76,17 +75,18 @@ function buildNodeForCategory(
     children,
   };
 }
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-IN", { month: "short", day: "numeric" });
-  };
 
-  const formatAmount = (amount: number) => {
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: "INR",
-    }).format(amount);
-  };
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-IN", { month: "short", day: "numeric" });
+};
+
+const formatAmount = (amount: number) => {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+  }).format(amount);
+};
 
 function ExpenseTreeItem({
   node,
@@ -248,6 +248,7 @@ export default function ExpensesPage() {
     } else {
       // If no filter date, show all expenses
       const newExpenseTree = buildExpenseTree(expenses, categories);
+      console.log(newExpenseTree)
       setExpenseTree(newExpenseTree);
     }
   }, [filterDate]);

@@ -80,7 +80,7 @@ export const columns: ColumnDef<Transaction>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
+    cell: ({ row, table }) => {
       const transaction = row.original;
 
       return (
@@ -99,7 +99,9 @@ export const columns: ColumnDef<Transaction>[] = [
               Copy transaction ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => {
+              table.options.meta?.setCurrentTransaction(transaction);
+            }}>View customer</DropdownMenuItem>
             <DropdownMenuItem>View payment details</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

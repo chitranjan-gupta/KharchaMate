@@ -19,6 +19,12 @@ export default function TransactionPage() {
   const { categories, addExpense } = useExpenseContext();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [localTransactions, setLocalTransactions] = useState<Transaction[]>([]);
+  const [currentTransaction, setCurrentTransaction] = useState<Transaction | null>(null);
+
+  const editTransaction = (transaction: Transaction) => {
+    setCurrentTransaction(transaction);
+    setIsDialogOpen(true);
+  };
 
   const groupByDate = (exp: Transaction[]) => {
     const grouped: { [date: string]: Transaction[] } = {};
@@ -95,7 +101,7 @@ Your Account
             : ["Uncategorized"],
         };
       if (a.type === "withdraw") {
-        addExpense({ id: a.id, date: a.date, amount: a.amount, categoryPath: a.categoryPath, description: a.details, note: `${a.note} Your Account: ${a.account}` });
+        addExpense({ id: a.id, date: a.date, amount: Math.abs(a.amount), categoryPath: a.categoryPath, description: a.details, note: `${a.note} Your Account: ${a.account}` });
       }
         return a;
       });
@@ -112,10 +118,8 @@ Your Account
         title="Transactions"
         description="Manage your transactions efficiently."
         actions={
-          <Button onClick={() => setIsDialogOpen(true)} className="gap-2">
-            <Plus className="w-4 h-4" />
-            Add Expense
-          </Button>
+          <>
+          </>
         }
       />
       <Input type="file" onChange={fi} />
@@ -131,23 +135,16 @@ Your Account
           </div>
         </CardHeader>
         <CardContent className="space-y-3">
-          <DataTable columns={columns} data={localTransactions} />
+          <DataTable columns={columns} data={localTransactions} setCurrentTransaction={editTransaction} />
         </CardContent>
       </Card>
-
-      {/* <AddExpenseDialog
-        open={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-        onAddExpense={addExpense}
-        categories={categories}
-      /> */}
 
       <EditExpenseDialog
         open={isDialogOpen}
         onOpenChange={setIsDialogOpen}
         onAddExpense={addExpense}
         categories={categories}
-        transaction={null}
+        transaction={currentTransaction}
       />
     </div>
   );

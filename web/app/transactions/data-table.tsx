@@ -5,15 +5,24 @@ import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFiltered
 import { Table } from "@/components/ui/table";
 import { Fragment, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Transaction } from "@/lib/types";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  setCurrentTransaction?: (transaction: Transaction | null) => void;
+}
+
+declare module '@tanstack/react-table' {
+  interface TableMeta<TData> {
+    setCurrentTransaction?: (transaction: Transaction | null) => void;
+  }
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  setCurrentTransaction,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -34,6 +43,9 @@ export function DataTable<TData, TValue>({
     state: {
       sorting,
       columnFilters,
+    },
+    meta: {
+      setCurrentTransaction: setCurrentTransaction || (() => {}), // no-op if not provided
     },
   });
   const groupedData = Object.groupBy(

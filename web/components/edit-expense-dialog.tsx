@@ -79,7 +79,7 @@ export function EditExpenseDialog({
   useEffect(() => {
     if (transaction) {
       setDescription(transaction.details);
-      setAmount(transaction.amount.toString());
+      setAmount(Math.abs(transaction.amount).toString());
       setDate(transaction.date.split("T")[0]);
       setTime(transaction.date.split("T")[1].slice(0,5));
       setNote(transaction.note || "");
@@ -115,7 +115,6 @@ export function EditExpenseDialog({
                   id="amount"
                   type="number"
                   step="0.01"
-                  min="0"
                   placeholder="0.00"
                   className="pl-7"
                   value={amount}

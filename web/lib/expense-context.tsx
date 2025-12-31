@@ -5,62 +5,70 @@ import type { Expense, Category, Income } from "./types"
 import { generateId, getTotalBudget } from "./category-utils"
 
 const initialExpenses: Expense[] = [
-  {
-    id: "1",
-    description: "Grocery Shopping",
-    amount: 156.32,
-    categoryPath: ["Food", "Groceries", "Organic"],
-    date: "2025-11-28",
-  },
-  {
-    id: "2",
-    description: "Electric Bill",
-    amount: 89.5,
-    categoryPath: ["Utilities", "Electricity"],
-    date: "2025-11-27",
-  },
-  {
-    id: "3",
-    description: "Netflix Subscription",
-    amount: 15.99,
-    categoryPath: ["Entertainment", "Streaming", "Video"],
-    date: "2025-11-26",
-  },
-  {
-    id: "4",
-    description: "Gas Station",
-    amount: 45.0,
-    categoryPath: ["Transport", "Fuel", "Regular"],
-    date: "2025-11-25",
-  },
-  {
-    id: "5",
-    description: "Restaurant Dinner",
-    amount: 78.45,
-    categoryPath: ["Food", "Dining Out", "Restaurant"],
-    date: "2025-11-24",
-  },
-  {
-    id: "6",
-    description: "Gym Membership",
-    amount: 50.0,
-    categoryPath: ["Health", "Fitness", "Gym"],
-    date: "2025-11-23",
-  },
-  {
-    id: "7",
-    description: "Online Course",
-    amount: 199.0,
-    categoryPath: ["Education", "Courses", "Online"],
-    date: "2025-11-22",
-  },
-  {
-    id: "8",
-    description: "Phone Bill",
-    amount: 65.0,
-    categoryPath: ["Utilities", "Phone", "Mobile"],
-    date: "2025-11-21",
-  },
+  // {
+  //   id: "1",
+  //   description: "Grocery Shopping",
+  //   amount: 156.32,
+  //   categoryPath: ["Food", "Groceries", "Organic"],
+  //   date: "2025-11-28",
+  // },
+  // {
+  //   id: "2",
+  //   description: "Electric Bill",
+  //   amount: 89.5,
+  //   categoryPath: ["Utilities", "Electricity"],
+  //   date: "2025-11-27",
+  // },
+  // {
+  //   id: "3",
+  //   description: "Netflix Subscription",
+  //   amount: 15.99,
+  //   categoryPath: ["Entertainment", "Streaming", "Video"],
+  //   date: "2025-11-26",
+  // },
+  // {
+  //   id: "4",
+  //   description: "Gas Station",
+  //   amount: 45.0,
+  //   categoryPath: ["Transport", "Fuel", "Regular"],
+  //   date: "2025-11-25",
+  // },
+  // {
+  //   id: "5",
+  //   description: "Restaurant Dinner",
+  //   amount: 78.45,
+  //   categoryPath: ["Food", "Dining Out", "Restaurant"],
+  //   date: "2025-11-24",
+  // },
+  // {
+  //   id: "6",
+  //   description: "Gym Membership",
+  //   amount: 50.0,
+  //   categoryPath: ["Health", "Fitness", "Gym"],
+  //   date: "2025-11-23",
+  // },
+  // {
+  //   id: "7",
+  //   description: "Online Course",
+  //   amount: 199.0,
+  //   categoryPath: ["Education", "Courses", "Online"],
+  //   date: "2025-11-22",
+  // },
+  // {
+  //   id: "8",
+  //   description: "Phone Bill",
+  //   amount: 65.0,
+  //   categoryPath: ["Utilities", "Phone", "Mobile"],
+  //   date: "2025-11-21",
+  // },
+  //   {
+  //   id: "9",
+  //   description: "Restaurant Dinner",
+  //   amount: 78.45,
+  //   categoryPath: ["Food", "Dining Out", "Fast Food"],
+  //   date: "2025-11-24",
+  // },
+
 ]
 
 const initialCategories: Category[] = [
