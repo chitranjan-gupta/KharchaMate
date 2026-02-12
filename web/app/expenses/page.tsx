@@ -9,6 +9,7 @@ import { AddExpenseDialog } from "@/components/add-expense-dialog";
 import { Plus, Trash2, ChevronDown, ChevronRight, Cross } from "lucide-react";
 import type { Category, Expense } from "@/lib/types";
 import { Calendar24 } from "@/components/date-time-picker";
+import { formatAmount, formatDate } from "@/lib";
 
 interface ExpenseTreeNode {
   name: string;
@@ -20,7 +21,7 @@ interface ExpenseTreeNode {
 
 function buildExpenseTree(
   expenses: Expense[],
-  categories: Category[]
+  categories: Category[],
 ): ExpenseTreeNode[] {
   const tree: ExpenseTreeNode[] = [];
 
@@ -38,13 +39,13 @@ function buildExpenseTree(
 function buildNodeForCategory(
   category: Category,
   allExpenses: Expense[],
-  currentPath: string[]
+  currentPath: string[],
 ): ExpenseTreeNode {
   // Find expenses that exactly match this category path
   const directExpenses = allExpenses.filter(
     (exp) =>
       exp.categoryPath.length === currentPath.length &&
-      exp.categoryPath.every((p, i) => p === currentPath[i])
+      exp.categoryPath.every((p, i) => p === currentPath[i]),
   );
   // Build children nodes
   const children: ExpenseTreeNode[] = [];
@@ -62,7 +63,7 @@ function buildNodeForCategory(
   const allSubExpenses = allExpenses.filter(
     (exp) =>
       exp.categoryPath.length >= currentPath.length &&
-      currentPath.every((p, i) => exp.categoryPath[i] === p)
+      currentPath.every((p, i) => exp.categoryPath[i] === p),
   );
 
   const total = allSubExpenses.reduce((sum, exp) => sum + exp.amount, 0);
@@ -75,18 +76,6 @@ function buildNodeForCategory(
     children,
   };
 }
-
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("en-IN", { month: "short", day: "numeric" });
-};
-
-const formatAmount = (amount: number) => {
-  return new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
-  }).format(amount);
-};
 
 function ExpenseTreeItem({
   node,
@@ -213,11 +202,12 @@ export default function ExpensesPage() {
     useExpenseContext();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [expanded, setExpanded] = useState<Set<string>>(
-    () => new Set(categories.map((c) => c.name))
+    () => new Set(categories.map((c) => c.name)),
   );
-  const [filterDate, setFilterDate] = useState<Date | null>(new Date());
+  const [fromDate, setFromDate] = useState<Date | null>(new Date());
+  const [endDate, setEndDate] = useState<Date | null>(new Date());
   const [expenseTree, setExpenseTree] = useState<ExpenseTreeNode[]>(() =>
-    buildExpenseTree(expenses, categories)
+    buildExpenseTree(expenses, categories),
   );
 
   const toggleExpanded = (name: string) => {
@@ -233,13 +223,16 @@ export default function ExpensesPage() {
   };
 
   useEffect(() => {
-    if (filterDate) {
+    if (fromDate && endDate) {
       const filteredExpenses = expenses.filter((expense) => {
         const expenseDate = new Date(expense.date);
         return (
-          expenseDate.getFullYear() === filterDate.getFullYear() &&
-          expenseDate.getMonth() === filterDate.getMonth() &&
-          expenseDate.getDate() === filterDate.getDate()
+          expenseDate.getFullYear() >= fromDate.getFullYear() &&
+          expenseDate.getFullYear() <= endDate.getFullYear() &&
+          expenseDate.getMonth() >= fromDate.getMonth() &&
+          expenseDate.getMonth() <= endDate.getMonth() &&
+          expenseDate.getDate() >= fromDate.getDate() &&
+          expenseDate.getDate() <= endDate.getDate()
         );
       });
       // Rebuild the expense tree with filtered expenses
@@ -248,10 +241,10 @@ export default function ExpensesPage() {
     } else {
       // If no filter date, show all expenses
       const newExpenseTree = buildExpenseTree(expenses, categories);
-      console.log(newExpenseTree)
+      console.log(newExpenseTree);
       setExpenseTree(newExpenseTree);
     }
-  }, [filterDate]);
+  }, [fromDate, endDate]);
 
   return (
     <div className="container mx-auto px-4 py-6 md:py-8">
@@ -277,13 +270,30 @@ export default function ExpensesPage() {
               </CardTitle>
               <p className="text-sm text-muted-foreground mt-1">
                 Expenses organized by category hierarchy
+                <br />
+                <span>Filter By</span>
               </p>
             </div>
-            <div>
-              <p className="text-sm text-muted-foreground mt-1">Filter By</p>
-              <div className="flex flex-row items-center">
-                <Calendar24 date={filterDate} setDate={setFilterDate} />
-                <Button onClick={() => setFilterDate(null)} className="gap-2">
+            <div className="flex flex-col items-center gap-1">
+              <div className="flex flex-row items-center justify-center">
+                <div>
+                  <span>From</span>
+                  <Calendar24 date={fromDate} setDate={setFromDate} />
+                </div>
+                <div>-</div>
+                <div>
+                  <span>To</span>
+                  <Calendar24 date={endDate} setDate={setEndDate} />
+                </div>
+              </div>
+              <div>
+                <Button
+                  onClick={() => {
+                    setFromDate(null);
+                    setEndDate(null);
+                  }}
+                  className="gap-2"
+                >
                   <Cross className="w-4 h-4" />
                   Clear
                 </Button>

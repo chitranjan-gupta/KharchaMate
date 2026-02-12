@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { ChevronDown, ChevronRight, Plus, Trash2, GripVertical, Save } from "lucide-react"
 import type { Category } from "@/lib/types"
 import { generateId, getTotalBudget, moveCategoryById, isDescendantOf } from "@/lib/category-utils"
+import { formatAmount } from "@/lib"
 
 interface DragState {
   draggedId: string | null
@@ -175,7 +176,7 @@ function CategoryEditor({
         />
 
         <div className="relative w-24">
-          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground text-xs">$</span>
+          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground text-xs">₹</span>
           <Input
             type="number"
             min="0"
@@ -371,7 +372,7 @@ export default function BudgetPage() {
             </div>
             <div className="text-right">
               <p className="text-xs text-muted-foreground">Total Monthly Budget</p>
-              <p className="text-xl font-bold text-foreground">${localTotalBudget.toLocaleString()}</p>
+              <p className="text-xl font-bold text-foreground">{formatAmount(localTotalBudget)}</p>
             </div>
           </div>
         </CardHeader>

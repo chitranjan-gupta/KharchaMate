@@ -1,7 +1,24 @@
 "use client";
 import { Input } from "@/components/ui/input";
-import { TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
-import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getGroupedRowModel, getPaginationRowModel, getSortedRowModel, SortingState, useReactTable } from "@tanstack/react-table";
+import {
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table";
+import {
+  ColumnDef,
+  ColumnFiltersState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getGroupedRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  SortingState,
+  useReactTable,
+} from "@tanstack/react-table";
 import { Table } from "@/components/ui/table";
 import { Fragment, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -13,7 +30,7 @@ interface DataTableProps<TData, TValue> {
   setCurrentTransaction?: (transaction: Transaction | null) => void;
 }
 
-declare module '@tanstack/react-table' {
+declare module "@tanstack/react-table" {
   interface TableMeta<TData> {
     setCurrentTransaction?: (transaction: Transaction | null) => void;
   }
@@ -88,36 +105,49 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {Object.entries(groupedData).map(([category, _rows]) => (
               <Fragment key={category}>
-                {/* Section Header Row */}
-                <TableRow className="bg-muted">
-                  <TableCell colSpan={2} className="font-semibold">
-                    {category}
-                  </TableCell>
-                </TableRow>
-
-                {/* Section Rows */}
                 {table
                   .getRowModel()
                   .rows.filter(
                     (row) =>
                       new Date(row.getValue("date")).toLocaleDateString() ===
                       category
-                  )
-                  .map((row) => (
-                    <TableRow
-                      key={row.id}
-                      data-state={row.getIsSelected() && "selected"}
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      ))}
+                  ).length === 0 ? (
+                  <Fragment></Fragment>
+                ) : (
+                  <Fragment>
+                    {/* Section Header Row */}
+                    <TableRow className="bg-muted">
+                      <TableCell colSpan={2} className="font-semibold">
+                        {category}
+                      </TableCell>
                     </TableRow>
-                  ))}
+
+                    {/* Section Rows */}
+                    {table
+                      .getRowModel()
+                      .rows.filter(
+                        (row) =>
+                          new Date(
+                            row.getValue("date")
+                          ).toLocaleDateString() === category
+                      )
+                      .map((row) => (
+                        <TableRow
+                          key={row.id}
+                          data-state={row.getIsSelected() && "selected"}
+                        >
+                          {row.getVisibleCells().map((cell) => (
+                            <TableCell key={cell.id}>
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      ))}
+                  </Fragment>
+                )}
               </Fragment>
             ))}
           </TableBody>

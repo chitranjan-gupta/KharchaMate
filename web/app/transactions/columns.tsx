@@ -101,8 +101,7 @@ export const columns: ColumnDef<Transaction>[] = [
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => {
               table.options.meta?.setCurrentTransaction(transaction);
-            }}>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            }}>View payment details</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

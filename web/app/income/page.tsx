@@ -19,6 +19,7 @@ import {
   MoreHorizontal,
 } from "lucide-react"
 import type React from "react"
+import { formatAmount, formatDate } from "@/lib"
 
 const sourceIcons: Record<string, React.ReactNode> = {
   Salary: <Briefcase className="w-4 h-4" />,
@@ -46,16 +47,11 @@ export default function IncomePage() {
   const { income, totalIncome, addIncome, deleteIncome } = useExpenseContext()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
-  }
-
   return (
     <div className="container mx-auto px-4 py-6 md:py-8">
       <PageHeader
         title="Income"
-        description={`Total: $${totalIncome.toLocaleString()} from ${income.length} sources`}
+        description={`Total: ${formatAmount(totalIncome)} from ${income.length} sources`}
         actions={
           <Button onClick={() => setIsDialogOpen(true)} className="gap-2">
             <Plus className="w-4 h-4" />
@@ -94,7 +90,7 @@ export default function IncomePage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-sm font-semibold text-success">+${entry.amount.toLocaleString()}</span>
+                    <span className="text-sm font-semibold text-success">+₹{entry.amount.toLocaleString()}</span>
                     <Button
                       variant="ghost"
                       size="icon"

@@ -1,24 +1,21 @@
 "use client";
 
-import { useState, ChangeEvent, useEffect, useRef } from "react";
+import { useState, ChangeEvent } from "react";
 import { useExpenseContext } from "@/lib/expense-context";
 import { PageHeader } from "@/components/page-header";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Plus } from "lucide-react";
 import type { Transaction } from "@/lib/types";
 import { generateId } from "@/lib/category-utils";
 import * as XLSX from "xlsx";
-import { AddExpenseDialog } from "@/components/add-expense-dialog";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
 import { EditExpenseDialog } from "@/components/edit-expense-dialog";
 
 export default function TransactionPage() {
-  const { categories, addExpense } = useExpenseContext();
+  const { categories, addExpense, addTransaction, transactions: localTransactions } = useExpenseContext();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [localTransactions, setLocalTransactions] = useState<Transaction[]>([]);
+  // const [localTransactions, setLocalTransactions] = useState<Transaction[]>(transactions);
   const [currentTransaction, setCurrentTransaction] = useState<Transaction | null>(null);
 
   const editTransaction = (transaction: Transaction) => {
@@ -103,9 +100,11 @@ Your Account
       if (a.type === "withdraw") {
         addExpense({ id: a.id, date: a.date, amount: Math.abs(a.amount), categoryPath: a.categoryPath, description: a.details, note: `${a.note} Your Account: ${a.account}` });
       }
+      addTransaction(a);
         return a;
       });
-      setLocalTransactions(transactionsFromFile);
+      // setLocalTransactions(transactionsFromFile);
+
       // console.log(data);
     };
 

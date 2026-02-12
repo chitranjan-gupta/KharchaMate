@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 import type { Expense } from "@/lib/types"
+import { formatAmount } from "@/lib"
 
 interface ExpenseChartProps {
   expenses: Expense[]
@@ -10,15 +11,15 @@ interface ExpenseChartProps {
 
 export function ExpenseChart({ expenses }: ExpenseChartProps) {
   const last7Days = Array.from({ length: 7 }, (_, i) => {
-    const date = new Date()
+    const date = new Date("2026-01-07")
     date.setDate(date.getDate() - (6 - i))
     return date.toISOString().split("T")[0]
   })
 
   const chartData = last7Days.map((date) => {
-    const dayExpenses = expenses.filter((exp) => exp.date === date)
+    const dayExpenses = expenses.filter((exp) => new Date(exp.date).getDate() === new Date(date).getDate())
     const total = dayExpenses.reduce((sum, exp) => sum + exp.amount, 0)
-    const dayName = new Date(date).toLocaleDateString("en-US", { weekday: "short" })
+    const dayName = new Date(date).toLocaleDateString("en-IN", { weekday: "short" })
     return { date: dayName, amount: total }
   })
 
@@ -48,14 +49,14 @@ export function ExpenseChart({ expenses }: ExpenseChartProps) {
                 axisLine={false}
                 tickLine={false}
                 tick={{ fill: "oklch(0.5 0.02 260)", fontSize: 12 }}
-                tickFormatter={(value) => `$${value}`}
+                tickFormatter={(value) => `${value.toString()}`}
               />
               <Tooltip
                 content={({ active, payload }) => {
                   if (active && payload && payload.length) {
                     return (
                       <div className="bg-card border rounded-lg shadow-lg p-3">
-                        <p className="text-sm font-medium text-foreground">${payload[0].value?.toLocaleString()}</p>
+                        <p className="text-sm font-medium text-foreground">{formatAmount(payload[0].value?.toString() || "0")}</p>
                         <p className="text-xs text-muted-foreground">{payload[0].payload.date}</p>
                       </div>
                     )

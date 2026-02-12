@@ -4,6 +4,8 @@ import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChevronDown, ChevronRight } from "lucide-react"
 import type { Expense, Category } from "@/lib/types"
+import { formatAmount } from "@/lib"
+
 
 interface CategoryBreakdownProps {
   expenses: Expense[]
@@ -63,8 +65,8 @@ function CategoryItem({
             <span className={`text-sm ${depth === 0 ? "font-medium" : ""} text-foreground`}>{category.name}</span>
           </div>
           <div className="text-right">
-            <span className="text-sm font-semibold text-foreground">${total.toFixed(0)}</span>
-            {hasBudget && <span className="text-xs text-muted-foreground ml-1">/ ${category.budget}</span>}
+            <span className="text-sm font-semibold text-foreground">{formatAmount(total)}</span>
+            {hasBudget && <span className="text-xs text-muted-foreground ml-1">/ {formatAmount(category.budget)}</span>}
           </div>
         </div>
 

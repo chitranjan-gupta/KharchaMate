@@ -1,6 +1,7 @@
 "use client"
 
 import { Card, CardContent } from "@/components/ui/card"
+import { formatAmount } from "@/lib"
 import { TrendingUp, TrendingDown, Wallet, Receipt, DollarSign } from "lucide-react"
 
 interface StatsCardsProps {
@@ -33,7 +34,7 @@ export function StatsCards({
             </div>
             <div>
               <p className="text-xs text-muted-foreground font-medium">Total Income</p>
-              <p className="text-xl md:text-2xl font-bold text-success">${totalIncome.toLocaleString()}</p>
+              <p className="text-xl md:text-2xl font-bold text-success">{formatAmount(totalIncome)}</p>
               <p className="text-xs text-muted-foreground">{incomeCount} entries</p>
             </div>
           </div>
@@ -48,7 +49,7 @@ export function StatsCards({
             </div>
             <div>
               <p className="text-xs text-muted-foreground font-medium">Total Budget</p>
-              <p className="text-xl md:text-2xl font-bold text-foreground">${totalBudget.toLocaleString()}</p>
+              <p className="text-xl md:text-2xl font-bold text-foreground">{formatAmount(totalBudget)}</p>
             </div>
           </div>
         </CardContent>
@@ -62,7 +63,7 @@ export function StatsCards({
             </div>
             <div>
               <p className="text-xs text-muted-foreground font-medium">Total Spent</p>
-              <p className="text-xl md:text-2xl font-bold text-foreground">${totalExpenses.toFixed(2)}</p>
+              <p className="text-xl md:text-2xl font-bold text-foreground">{formatAmount(totalExpenses)}</p>
               <p className="text-xs text-muted-foreground">{expenseCount} transactions</p>
             </div>
           </div>
@@ -80,9 +81,9 @@ export function StatsCards({
             <div>
               <p className="text-xs text-muted-foreground font-medium">Budget Left</p>
               <p
-                className={`text-xl md:text-2xl font-bold ${remainingBudget >= 0 ? "text-success" : "text-destructive"}`}
+                className={`whitespace-nowrap text-xl md:text-2xl font-bold ${remainingBudget >= 0 ? "text-success" : "text-destructive"}`}
               >
-                ${Math.abs(remainingBudget).toFixed(2)}
+                -{formatAmount(Math.abs(remainingBudget))}
               </p>
             </div>
           </div>
@@ -99,8 +100,8 @@ export function StatsCards({
             </div>
             <div className="flex-1">
               <p className="text-xs text-muted-foreground font-medium">Net Balance</p>
-              <p className={`text-xl md:text-2xl font-bold ${netBalance >= 0 ? "text-success" : "text-destructive"}`}>
-                {netBalance >= 0 ? "+" : "-"}${Math.abs(netBalance).toFixed(2)}
+              <p className={`whitespace-nowrap text-xl md:text-2xl font-bold ${netBalance >= 0 ? "text-success" : "text-destructive"}`}>
+                {`${netBalance >= 0 ? "+" : "-"}${formatAmount(Math.abs(netBalance))}`}
               </p>
             </div>
           </div>
