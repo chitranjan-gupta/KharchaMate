@@ -68,6 +68,14 @@ export function getTotalBudget(categories: Category[]): number {
   return total
 }
 
+export function getBudget(categories: Category[]): number {
+  let total = 0
+  for (const cat of categories) {
+    total += cat.budget
+  }
+  return total
+}
+
 // Add a child category at a specific path
 export function addChildCategory(categories: Category[], parentPath: string[], newChild: Category): Category[] {
   if (parentPath.length === 0) {

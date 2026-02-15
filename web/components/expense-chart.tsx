@@ -56,7 +56,7 @@ export function ExpenseChart({ expenses }: ExpenseChartProps) {
                   if (active && payload && payload.length) {
                     return (
                       <div className="bg-card border rounded-lg shadow-lg p-3">
-                        <p className="text-sm font-medium text-foreground">{formatAmount(payload[0].value?.toString() || "0")}</p>
+                        <p className="text-sm font-medium text-foreground">{formatAmount(Number(payload[0].value) || 0)}</p>
                         <p className="text-xs text-muted-foreground">{payload[0].payload.date}</p>
                       </div>
                     )

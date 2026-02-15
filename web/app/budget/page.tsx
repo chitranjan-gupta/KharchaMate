@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { ChevronDown, ChevronRight, Plus, Trash2, GripVertical, Save } from "lucide-react"
 import type { Category } from "@/lib/types"
-import { generateId, getTotalBudget, moveCategoryById, isDescendantOf } from "@/lib/category-utils"
+import { generateId, getBudget, moveCategoryById, isDescendantOf } from "@/lib/category-utils"
 import { formatAmount } from "@/lib"
 
 interface DragState {
@@ -54,13 +54,33 @@ function CategoryEditor({
   const isDragOver = dragState.dragOverId === category.id
 
   const handleBudgetChange = (value: string) => {
-    onChange({ ...category, budget: Number.parseFloat(value) || 0 })
+    const newBudget = Number.parseFloat(value) || 0
+    
+    // If this is a child (not root), ensure it doesn't exceed parent
+    // For now, we'll allow it but you could add validation here
+    onChange({ ...category, budget: newBudget })
   }
 
   const handleChildChange = (childId: string, updated: Category) => {
+    // Calculate total budget of all children excluding this one
+    const siblingTotal = category.children?.reduce((sum, c) => {
+      if (c.id === childId) return sum // Don't count this child yet
+      return sum + (c.budget || 0)
+    }, 0) || 0
+    
+    // If child's new budget + siblings exceeds parent, cap it
+    const parentBudget = category.budget || 0
+    const remainingBudget = parentBudget - siblingTotal
+    const finalChildBudget = Math.min(updated.budget || 0, Math.max(0, remainingBudget))
+    
+    // Update child with capped budget if needed
+    const finalUpdated = finalChildBudget !== (updated.budget || 0) 
+      ? { ...updated, budget: finalChildBudget }
+      : updated
+    
     onChange({
       ...category,
-      children: category.children?.map((c) => (c.id === childId ? updated : c)),
+      children: category.children?.map((c) => (c.id === childId ? finalUpdated : c)),
     })
   }
 
@@ -243,9 +263,10 @@ function CategoryEditor({
 
 export default function BudgetPage() {
   const { categories, updateCategories, totalBudget } = useExpenseContext()
+  const [localTotalBudget, setLocalTotalBudget] = useState<number>(0);
   const [localCategories, setLocalCategories] = useState<Category[]>([])
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
-  const [hasChanges, setHasChanges] = useState(false)
+  const [hasChanges, setHasChanges] = useState<boolean>(false)
   const [dragState, setDragState] = useState<DragState>({
     draggedId: null,
     dragOverId: null,
@@ -255,6 +276,7 @@ export default function BudgetPage() {
   useEffect(() => {
     setLocalCategories(JSON.parse(JSON.stringify(categories)))
     setExpanded(new Set(categories.map((c) => c.id)))
+    setLocalTotalBudget(totalBudget)
     setHasChanges(false)
   }, [categories])
 
@@ -339,7 +361,7 @@ export default function BudgetPage() {
       children: [],
     }
     setLocalCategories((prev) => [...prev, newCategory])
-    setExpanded((prev) => new Set([...prev, newCategory.id]))
+    setExpanded((prev) => new Set([...prev]))
     setHasChanges(true)
   }
 
@@ -348,7 +370,9 @@ export default function BudgetPage() {
     setHasChanges(false)
   }
 
-  const localTotalBudget = getTotalBudget(localCategories)
+  useEffect(() => {
+    setLocalTotalBudget(getBudget(localCategories))
+  }, [localCategories])
 
   return (
     <div className="container mx-auto px-4 py-6 md:py-8">
@@ -410,3 +434,4 @@ export default function BudgetPage() {
     </div>
   )
 }
+  

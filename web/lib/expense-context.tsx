@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, type ReactNode } from "react"
 import type { Expense, Category, Income, Transaction } from "./types"
-import { generateId, getTotalBudget } from "./category-utils"
+import { generateId, getBudget } from "./category-utils"
 
 const initialExpenses: Expense[] = [
   // {
@@ -223,7 +223,7 @@ interface ExpenseContextType {
   addExpense: (expense: Expense) => void
   deleteExpense: (id: string) => void
   updateCategories: (categories: Category[]) => void
-  addIncome: (income: Omit<Income, "id">) => void
+  addIncome: (income: Income) => void
   deleteIncome: (id: string) => void
   addTransaction?: (transaction: Transaction) => void
 }
@@ -236,7 +236,7 @@ export function ExpenseProvider({ children }: { children: ReactNode }) {
   const [income, setIncome] = useState<Income[]>(initialIncome)
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0)
-  const totalBudget = getTotalBudget(categories)
+  const totalBudget = getBudget(categories)
   const totalIncome = income.reduce((sum, inc) => sum + inc.amount, 0)
   const remainingBudget = totalBudget - totalExpenses
 
@@ -258,9 +258,9 @@ export function ExpenseProvider({ children }: { children: ReactNode }) {
     setCategories(updatedCategories)
   }
 
-  const addIncome = (newIncome: Omit<Income, "id">) => {
-    const incomeEntry: Income = { ...newIncome, id: Date.now().toString() }
-    setIncome([incomeEntry, ...income])
+  const addIncome = (newIncome: Income) => {
+    const incomeEntry: Income = { ...newIncome, id: newIncome.id || generateId() }
+    setIncome((prevIncome) => [prevIncome.filter((i) => i.id !== incomeEntry.id), incomeEntry].flat())
   }
 
   const deleteIncome = (id: string) => {
