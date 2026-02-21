@@ -71,7 +71,6 @@ export const columns: ColumnDef<Transaction>[] = [
         </Button>
       );
     },
-    enableGrouping: true,
     cell: ({ row }) => new Date(row.getValue("date")).toLocaleDateString() + " " + new Date(row.getValue("date")).toLocaleTimeString(),
   },
   {

@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useExpenseContext } from "@/lib/expense-context"
 import { PageHeader } from "@/components/page-header"
 import { Button } from "@/components/ui/button"
@@ -263,6 +263,7 @@ function CategoryEditor({
 
 export default function BudgetPage() {
   const { categories, updateCategories, totalBudget } = useExpenseContext()
+  const one = useRef(false);
   const [localTotalBudget, setLocalTotalBudget] = useState<number>(0);
   const [localCategories, setLocalCategories] = useState<Category[]>([])
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
@@ -274,11 +275,13 @@ export default function BudgetPage() {
   })
 
   useEffect(() => {
-    setLocalCategories(JSON.parse(JSON.stringify(categories)))
-    setExpanded(new Set(categories.map((c) => c.id)))
-    setLocalTotalBudget(totalBudget)
-    setHasChanges(false)
-  }, [categories])
+    if(!one.current && categories.length > 0) {
+      setLocalCategories(categories)
+      setLocalTotalBudget(totalBudget)
+      setHasChanges(false)
+      one.current = true;
+    }
+  }, [categories, totalBudget])
 
   const toggleExpanded = (id: string) => {
     setExpanded((prev) => {
@@ -373,6 +376,12 @@ export default function BudgetPage() {
   useEffect(() => {
     setLocalTotalBudget(getBudget(localCategories))
   }, [localCategories])
+
+  useEffect(() => {
+    if(hasChanges) {
+     handleSave() 
+    }
+  }, [hasChanges])
 
   return (
     <div className="container mx-auto px-4 py-6 md:py-8">

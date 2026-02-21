@@ -204,8 +204,8 @@ export default function ExpensesPage() {
   const [expanded, setExpanded] = useState<Set<string>>(
     () => new Set(categories.map((c) => c.name)),
   );
-  const [fromDate, setFromDate] = useState<Date | null>(new Date());
-  const [endDate, setEndDate] = useState<Date | null>(new Date());
+  const [fromDate, setFromDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
   const [expenseTree, setExpenseTree] = useState<ExpenseTreeNode[]>(() =>
     buildExpenseTree(expenses, categories),
   );
@@ -241,10 +241,9 @@ export default function ExpensesPage() {
     } else {
       // If no filter date, show all expenses
       const newExpenseTree = buildExpenseTree(expenses, categories);
-      console.log(newExpenseTree);
       setExpenseTree(newExpenseTree);
     }
-  }, [fromDate, endDate]);
+  }, [fromDate, endDate, expenses, categories]);
 
   return (
     <div className="container mx-auto px-4 py-6 md:py-8">

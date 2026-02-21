@@ -1,8 +1,19 @@
 "use client"
 
-import { createContext, useContext, useState, type ReactNode } from "react"
+import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 import type { Expense, Category, Income, Transaction } from "./types"
 import { generateId, getBudget } from "./category-utils"
+import {
+  initializeDB,
+  loadExpenses as dbLoadExpenses,
+  saveExpenses as dbSaveExpenses,
+  loadCategories as dbLoadCategories,
+  saveCategories as dbSaveCategories,
+  loadIncome as dbLoadIncome,
+  saveIncome as dbSaveIncome,
+  loadTransactions as dbLoadTransactions,
+  saveTransactions as dbSaveTransactions,
+} from "./indexdb-store"
 
 const initialExpenses: Expense[] = [
   // {
@@ -235,6 +246,109 @@ export function ExpenseProvider({ children }: { children: ReactNode }) {
   const [categories, setCategories] = useState<Category[]>(initialCategories)
   const [income, setIncome] = useState<Income[]>(initialIncome)
   const [transactions, setTransactions] = useState<Transaction[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [isDBReady, setIsDBReady] = useState(false)
+
+  // Initialize database and load initial data
+  useEffect(() => {
+    const initAndLoad = async () => {
+      try {
+        // Initialize the database
+        await initializeDB()
+        setIsDBReady(true)
+
+        // Load data from IndexDB
+        const [loadedExpenses, loadedCategories, loadedIncome, loadedTransactions] = await Promise.all([
+          dbLoadExpenses(),
+          dbLoadCategories(),
+          dbLoadIncome(),
+          dbLoadTransactions(),
+        ])
+
+        // Only update state if data exists in IndexDB
+        if (loadedExpenses && loadedExpenses.length > 0) {
+          setExpenses(loadedExpenses)
+        }
+        if (loadedCategories && loadedCategories.length > 0) {
+          setCategories(loadedCategories)
+        }
+        if (loadedIncome && loadedIncome.length > 0) {
+          setIncome(loadedIncome)
+        }
+        if (loadedTransactions && loadedTransactions.length > 0) {
+          setTransactions(loadedTransactions)
+        }
+      } catch (error) {
+        console.error("Error initializing database or loading data:", error)
+        // Continue with in-memory state if IndexDB fails
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    initAndLoad()
+  }, [])
+
+  // Sync expenses to IndexDB
+  useEffect(() => {
+    if (!isDBReady || isLoading) return
+
+    const syncExpenses = async () => {
+      try {
+        await dbSaveExpenses(expenses)
+      } catch (error) {
+        console.error("Error syncing expenses to IndexDB:", error)
+      }
+    }
+
+    syncExpenses()
+  }, [expenses, isDBReady, isLoading])
+
+  // Sync categories to IndexDB
+  useEffect(() => {
+    if (!isDBReady || isLoading) return
+
+    const syncCategories = async () => {
+      try {
+        await dbSaveCategories(categories)
+      } catch (error) {
+        console.error("Error syncing categories to IndexDB:", error)
+      }
+    }
+
+    syncCategories()
+  }, [categories, isDBReady, isLoading])
+
+  // Sync income to IndexDB
+  useEffect(() => {
+    if (!isDBReady || isLoading) return
+
+    const syncIncome = async () => {
+      try {
+        await dbSaveIncome(income)
+      } catch (error) {
+        console.error("Error syncing income to IndexDB:", error)
+      }
+    }
+
+    syncIncome()
+  }, [income, isDBReady, isLoading])
+
+  // Sync transactions to IndexDB
+  useEffect(() => {
+    if (!isDBReady || isLoading) return
+
+    const syncTransactions = async () => {
+      try {
+        await dbSaveTransactions(transactions)
+      } catch (error) {
+        console.error("Error syncing transactions to IndexDB:", error)
+      }
+    }
+
+    syncTransactions()
+  }, [transactions, isDBReady, isLoading])
+
   const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0)
   const totalBudget = getBudget(categories)
   const totalIncome = income.reduce((sum, inc) => sum + inc.amount, 0)

@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card"
 import { formatAmount } from "@/lib"
-import { TrendingUp, TrendingDown, Wallet, Receipt, DollarSign } from "lucide-react"
+import { TrendingUp, TrendingDown, Wallet, Receipt, IndianRupee } from "lucide-react"
 
 interface StatsCardsProps {
   totalExpenses: number
@@ -30,7 +30,7 @@ export function StatsCards({
         <CardContent className="p-4 md:p-6">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-success/10">
-              <DollarSign className="w-5 h-5 text-success" />
+              <IndianRupee className="w-5 h-5 text-success" />
             </div>
             <div>
               <p className="text-xs text-muted-foreground font-medium">Total Income</p>
@@ -83,7 +83,7 @@ export function StatsCards({
               <p
                 className={`whitespace-nowrap text-xl md:text-2xl font-bold ${remainingBudget >= 0 ? "text-success" : "text-destructive"}`}
               >
-                -{formatAmount(Math.abs(remainingBudget))}
+                {`${remainingBudget >= 0 ? "+" : "-"}${formatAmount(Math.abs(remainingBudget))}`}
               </p>
             </div>
           </div>

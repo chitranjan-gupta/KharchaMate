@@ -20,7 +20,7 @@ interface AddExpenseDialogProps {
 
 export function AddExpenseDialog({ open, onOpenChange, onAddExpense, categories }: AddExpenseDialogProps) {
   const [description, setDescription] = useState("")
-  const [amount, setAmount] = useState("")
+  const [amount, setAmount] = useState<number>(0)
   const [selectedPathId, setSelectedPathId] = useState("")
   const [date, setDate] = useState(new Date().toISOString().split("T")[0])
   const [note, setNote] = useState("")
@@ -36,14 +36,14 @@ export function AddExpenseDialog({ open, onOpenChange, onAddExpense, categories 
 
     onAddExpense({
       description,
-      amount: Number.parseFloat(amount),
+      amount: amount,
       categoryPath: selected.path,
       date,
       ...(note.trim() && { note: note.trim() }),
     })
 
     setDescription("")
-    setAmount("")
+    setAmount(0)
     setSelectedPathId("")
     setDate(new Date().toISOString().split("T")[0])
     setNote("")
@@ -72,16 +72,16 @@ export function AddExpenseDialog({ open, onOpenChange, onAddExpense, categories 
             <div className="space-y-2">
               <Label htmlFor="amount">Amount</Label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">₹</span>
                 <Input
                   id="amount"
                   type="number"
                   step="0.01"
                   min="0"
-                  placeholder="0.00"
+                  placeholder="0"
                   className="pl-7"
                   value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
+                  onChange={(e) => setAmount(Number.parseFloat(e.target.value) || 0)}
                   required
                 />
               </div>
